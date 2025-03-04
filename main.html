@@ -198,7 +198,7 @@
             วิธีการคิดยอดง่ายๆ ตามนี้:<br><br>
             - ให้เอาชื่อคนไล่ ไว้ข้างหน้าจะดูง่ายกว่า<br>
             - ราคาถ้าคนเล่น 280/300 ให้เฮาใส่เป็น 80/00 แล้วใส่ ราคาที่เล่น 500<br>
-            - เว็บจะคำนวนกำไรให้เอง ตอนที่กด X ดูได้ใน ประวัติการลบตาราง
+            - เว็บจะคำนวณกำไรให้เอง ตอนที่กด X ดูได้ใน ประวัติการลบตาราง
         </div>
         
         <div class="prohibited">
@@ -211,7 +211,24 @@
 
     <div id="tables-container"></div>
 
+    <button onclick="logout()">ออกจากระบบ</button>
+
     <script>
+        // ตรวจสอบสถานะการล็อกอิน
+        if (localStorage.getItem('loggedIn') !== 'true') {
+            // ถ้าไม่มีการล็อกอิน ให้พาผู้ใช้กลับไปที่หน้า login
+            window.location.href = "index.html";
+        } else {
+            // ถ้ามีการล็อกอิน แสดงชื่อผู้ใช้
+            document.getElementById('welcomeMessage').textContent = localStorage.getItem('username');
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            localStorage.removeItem('username');
+            window.location.href = "index.html";  // กลับไปที่หน้า login
+        }
+
         let historyData = [];
 
         function addRow(table) {
@@ -319,4 +336,3 @@
     </script>
 </body>
 </html>
-    
