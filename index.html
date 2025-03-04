@@ -15,28 +15,31 @@
     </form>
 
     <script>
-        // เช็คสถานะการล็อกอินที่มีอยู่
+        // ตรวจสอบว่ามีผู้ล็อกอินอยู่แล้วหรือไม่
         if(localStorage.getItem('loggedIn') === 'true') {
-            // ถ้าผู้ใช้ล็อกอินแล้ว ก็จะไม่ให้เข้าสู่หน้า login
             alert("มีผู้ใช้งานอยู่แล้ว");
-            window.location.href = "main.html";  // ไปที่หน้า main.html
+            window.location.href = "main.html";  // ไปยังหน้า main.html ถ้ามีการล็อกอินแล้ว
         }
 
-        // ตรวจสอบการล็อกอิน
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault();
             
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            const validUsername = "admin";
-            const validPassword = "1234";
+            const validUsername = "admin";  // ตัวอย่าง Username
+            const validPassword = "1234";   // ตัวอย่าง Password
 
             if (username === validUsername && password === validPassword) {
-                // ถ้าชื่อผู้ใช้และรหัสผ่านถูกต้อง
-                localStorage.setItem('loggedIn', 'true');
-                localStorage.setItem('username', username); // เก็บชื่อผู้ใช้ใน localStorage
-                window.location.href = "main.html";  // ไปยังหน้า main.html
+                // ตรวจสอบว่ามีคนล็อกอินอยู่หรือไม่
+                if(localStorage.getItem('loggedIn') === 'true') {
+                    alert("มีผู้ใช้งานอยู่แล้ว");
+                } else {
+                    // ถ้าผู้ใช้ล็อกอินสำเร็จ ให้บันทึกสถานะการล็อกอิน
+                    localStorage.setItem('loggedIn', 'true');
+                    localStorage.setItem('username', username);  // เก็บชื่อผู้ใช้
+                    window.location.href = "main.html";  // ไปยังหน้า main.html
+                }
             } else {
                 alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
             }
