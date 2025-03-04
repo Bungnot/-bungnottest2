@@ -1,53 +1,6 @@
 /* Place your CSS styles in this file */
 
-/* ตั้งค่าเบื้องต้น */
-body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(45deg, #6b8e23, #3cb371);
-    height: 100vh;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    color: #fff;
-}
 
-.login-container {
-    background-color: rgba(0, 0, 0, 0.7); /* ให้พื้นหลังด้านในเข้มขึ้น */
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    width: 300px;
-    text-align: center;
-}
-
-h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-input[type="text"],
-input[type="password"] {
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    transition: border-color 0.3s ease-in-out;
-}
-
-input[type="text"]:focus,
-input[type="password"]:focus {
-    border-color: #4CAF50;
-    outline: none;
-}
 
 button {
     padding: 12px;
