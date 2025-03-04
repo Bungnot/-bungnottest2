@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>เข้าสู่ระบบ</title>
-    <link rel="stylesheet" href="css.css">  <!-- ใส่การเชื่อมโยง CSS -->
+    <link rel="stylesheet" href="css.css">
 </head>
 <body>
     <h2>เข้าสู่ระบบ</h2>
@@ -21,6 +21,7 @@
             window.location.href = "main.html";  // ไปยังหน้า main.html ถ้ามีการล็อกอินแล้ว
         }
 
+        // ตรวจสอบการล็อกอิน
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault();
             
@@ -31,13 +32,15 @@
             const validPassword = "1234";   // ตัวอย่าง Password
 
             if (username === validUsername && password === validPassword) {
-                // ตรวจสอบว่ามีคนล็อกอินอยู่หรือไม่
-                if(localStorage.getItem('loggedIn') === 'true') {
-                    alert("มีผู้ใช้งานอยู่แล้ว");
+                // ตรวจสอบว่าไม่มีคนล็อกอินซ้อนกันอยู่แล้ว
+                if(sessionStorage.getItem('sessionId') !== null) {
+                    alert("มีคนใช้งานอยู่แล้ว กรุณาลองใหม่ภายหลัง");
+                    return;  // ถ้ามีการใช้งานอยู่จะไม่อนุญาตให้ล็อกอินซ้ำ
                 } else {
                     // ถ้าผู้ใช้ล็อกอินสำเร็จ ให้บันทึกสถานะการล็อกอิน
                     localStorage.setItem('loggedIn', 'true');
                     localStorage.setItem('username', username);  // เก็บชื่อผู้ใช้
+                    sessionStorage.setItem('sessionId', 'active');  // สร้าง session
                     window.location.href = "main.html";  // ไปยังหน้า main.html
                 }
             } else {
