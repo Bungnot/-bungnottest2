@@ -4,33 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>เข้าสู่ระบบ</title>
-    <style>
-        body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: #E3F2FD;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-        }
-        input, button {
-            padding: 10px;
-            font-size: 16px;
-            margin: 10px;
-            border-radius: 5px;
-            border: 1px solid #00796B;
-        }
-        button {
-            background-color: #00796B;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #004D40;
-        }
-    </style>
+    <link rel="stylesheet" href="css.css">  <!-- ใส่การเชื่อมโยง CSS -->
 </head>
 <body>
-
     <h2>เข้าสู่ระบบ</h2>
     <form id="loginForm">
         <input type="text" id="username" placeholder="ชื่อผู้ใช้" required><br>
@@ -39,6 +15,13 @@
     </form>
 
     <script>
+        // เช็คสถานะการล็อกอินที่มีอยู่
+        if(localStorage.getItem('loggedIn') === 'true') {
+            // ถ้าผู้ใช้ล็อกอินแล้ว ก็จะไม่ให้เข้าสู่หน้า login
+            alert("มีผู้ใช้งานอยู่แล้ว");
+            window.location.href = "main.html";  // ไปที่หน้า main.html
+        }
+
         // ตรวจสอบการล็อกอิน
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -52,7 +35,8 @@
             if (username === validUsername && password === validPassword) {
                 // ถ้าชื่อผู้ใช้และรหัสผ่านถูกต้อง
                 localStorage.setItem('loggedIn', 'true');
-                window.location.href = "main.html";  // เปลี่ยนไปยังหน้าเว็บหลัก
+                localStorage.setItem('username', username); // เก็บชื่อผู้ใช้ใน localStorage
+                window.location.href = "main.html";  // ไปยังหน้า main.html
             } else {
                 alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
             }
