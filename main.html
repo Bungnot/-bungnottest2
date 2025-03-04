@@ -226,6 +226,7 @@
         function logout() {
             localStorage.removeItem('loggedIn');
             localStorage.removeItem('username');
+            sessionStorage.removeItem('sessionId'); // ลบ session เมื่อออกจากระบบ
             window.location.href = "index.html";  // กลับไปที่หน้า login
         }
 
