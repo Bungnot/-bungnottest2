@@ -232,3 +232,70 @@ function sendMessageToLine() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function removeTable(button) {
+    const tableContainer = button.parentElement;
+    const inputs = tableContainer.querySelectorAll('input');
+
+    let hasInput = Array.from(inputs).some(input => input.value.trim() !== "");
+    if (!hasInput) {
+        // Show custom popup modal instead of alert
+        showPopup();
+        return;
+    }
+}
+
+// Show the popup modal
+function showPopup() {
+    const popupModal = document.getElementById('popupModal');
+    popupModal.style.display = 'block';
+
+    // Close modal when clicking the close button (×)
+    const closeButton = document.querySelector('.popup-close');
+    closeButton.onclick = function() {
+        popupModal.style.display = 'none';
+    }
+
+    // Close modal when clicking the "OK" button
+    const okButton = document.getElementById('popup-ok');
+    okButton.onclick = function() {
+        popupModal.style.display = 'none';
+    }
+}
+
+// Close modal when clicking anywhere outside the popup content
+window.onclick = function(event) {
+    const popupModal = document.getElementById('popupModal');
+    if (event.target === popupModal) {
+        popupModal.style.display = 'none';
+    }
+}
+
+
+
