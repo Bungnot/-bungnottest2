@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://i.postimg.cc/W4QQVdX7/3f9d7965-5b59-442d-94ca-c0c6a324f9d1.png">
-    <title>เว็บคิดยอดแอดมิน </title>
+    <title>เว็บคิดยอดแอดมิน</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script defer data-domain="bungnot.github.io/-bungnot.teamx" src="https://plausible.io/js/script.js"></script>
 
     <!-- เพิ่มฟอนต์จาก Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+
     <style>
-        
         /* ใส่สไตล์ต่างๆ ที่ไม่ต้องแก้ไข */
         body {
             font-family: 'Sarabun', sans-serif; /* เปลี่ยนฟอนต์ให้เป็น Sarabun */
@@ -233,24 +233,18 @@
         ✅ กันไฟดับ Auto นะจ๊ะ
     </div>
 
+    <div style="margin-top: 50px;">
+        <h3>ส่งข้อความเข้า Line OA (ยังไม่อัพเดท)</h3>
+        <input type="text" id="lineName" placeholder="กรอกชื่อในไลน์ OA" style="padding:10px; width:300px; margin:10px;"><br>
+        <textarea id="messageToSend" placeholder="ข้อความที่ต้องการส่ง" style="padding:10px; width:300px; height:100px; margin:10px;"></textarea><br>
+        <button onclick="sendMessageToLine()" style="padding:10px 20px; font-size:16px;">ส่งข้อความ</button>
+    </div>
 
-
-
-        <div style="margin-top: 50px;">
-            <h3>ส่งข้อความเข้า Line OA (ยังไม่อัพเดท)</h3>
-            <input type="text" id="lineName" placeholder="กรอกชื่อในไลน์ OA" style="padding:10px; width:300px; margin:10px;"><br>
-            <textarea id="messageToSend" placeholder="ข้อความที่ต้องการส่ง" style="padding:10px; width:300px; height:100px; margin:10px;"></textarea><br>
-            <button onclick="sendMessageToLine()" style="padding:10px 20px; font-size:16px;">ส่งข้อความ</button>
-        </div>
-
-
-        
-        <div class="prohibited">
-            วิธีการใช้งาน:<br><br>
-            - ห้ามใส่ตัวเลข 3 หลักที่อื่น นอกจากช่อง ราคาบั้งไฟ ใส่ได้<br>
-            - ถ้าคนยกเลิกแผลให้ลบแถวไปได้เลย<br>
-            - เวลาจะลบแถว ให้พิมพ์อะไรก็ได้ลงในช่องก่อน
-        </div>
+    <div class="prohibited">
+        วิธีการใช้งาน:<br><br>
+        - ห้ามใส่ตัวเลข 3 หลักที่อื่น นอกจากช่อง ราคาบั้งไฟ ใส่ได้<br>
+        - ถ้าคนยกเลิกแผลให้ลบแถวไปได้เลย<br>
+        - เวลาจะลบแถว ให้พิมพ์อะไรก็ได้ลงในช่องก่อน
     </div>
 
     <div id="tables-container"></div>
