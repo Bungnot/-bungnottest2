@@ -1,67 +1,94 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>อัพโหลดคลิปเพื่อลบลายน้ำ/ตัวหนังสือ</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ลบตัวหนังสือในคลิป</title>
   <style>
-    body { font-family: sans-serif; background: #f4f4f4; padding: 40px; }
-    .container { max-width: 500px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px #0002; }
-    input[type="file"] { margin-bottom: 15px; }
-    label { font-weight: bold; }
-    .preview { margin-top: 20px; }
-    button { padding: 10px 24px; background: #0061a8; color: #fff; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; }
-    button:disabled { background: #aaa; }
+    body, html {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      display: flex; justify-content: center; align-items: center;
+      background: #222;
+      color: #fff;
+      flex-direction: column;
+    }
+    #canvas {
+      max-width: 90vw;
+      max-height: 70vh;
+      background: #000;
+    }
+    #videoUploader {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>อัพโหลดคลิปเพื่อลบลายน้ำ/ตัวหนังสือ</h2>
-    <form id="uploadForm">
-      <label>เลือกไฟล์วิดีโอ:</label><br>
-      <input type="file" id="videoFile" name="videoFile" accept="video/*" required><br><br>
+  <input type="file" id="videoUploader" accept="video/*">
+  <canvas id="canvas"></canvas>
+  <video id="video" style="display:none;"></video>
 
-      <label>ข้อความที่ต้องการลบออกจากคลิป (เช่น ลายน้ำ):</label><br>
-      <input type="text" id="textToRemove" name="textToRemove" placeholder="พิมพ์ข้อความ" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc"><br><br>
-
-      <button type="submit">อัพโหลดและประมวลผล</button>
-    </form>
-    <div class="preview" id="preview"></div>
-  </div>
-
-
-
-  
-  
-
+  <!-- โหลด Tesseract.js สำหรับ OCR -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
   <script>
-    const form = document.getElementById('uploadForm');
-    const preview = document.getElementById('preview');
+    const uploader = document.getElementById('videoUploader');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
 
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      preview.innerHTML = 'กำลังอัพโหลดและประมวลผล...';
+    uploader.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      video.src = URL.createObjectURL(file);
+      video.load();
+      video.onloadedmetadata = () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        video.play();
+        processFrame();
+      };
+    });
 
-      const formData = new FormData(form);
+    async function processFrame() {
+      if (video.paused || video.ended) return;
+      // วาดเฟรมปัจจุบันลงบน canvas
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      // ตัวอย่าง POST ไปยัง backend (ต้องมี API จริง)
-      const response = await fetch('/api/remove_text_from_video', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        preview.innerHTML = `
-          <h3>วิดีโอที่ลบข้อความแล้ว</h3>
-          <video src="${url}" controls style="max-width:100%"></video>
-          <br><a href="${url}" download="video_no_text.mp4">ดาวน์โหลดวิดีโอ</a>
-        `;
-      } else {
-        preview.innerHTML = 'เกิดข้อผิดพลาดในการประมวลผลวิดีโอ';
+      try {
+        // เรียก OCR ตรวจจับคำในภาพ
+        const result = await Tesseract.recognize(canvas, 'eng+tha', {
+          logger: m => {} // ปิด log
+        });
+        result.data.words.forEach(word => {
+          const { x0, y0, x1, y1 } = word.bbox;
+          const w = x1 - x0, h = y1 - y0;
+          if (w > 0 && h > 0) {
+            // โมเสกแต่ละบล็อกขนาด 10x10px
+            const block = 10;
+            for (let yy = y0; yy < y1; yy += block) {
+              for (let xx = x0; xx < x1; xx += block) {
+                const bw = Math.min(block, x1 - xx);
+                const bh = Math.min(block, y1 - yy);
+                const imgData = ctx.getImageData(xx, yy, bw, bh);
+                let r=0, g=0, b=0, count = imgData.data.length/4;
+                for (let i=0; i<imgData.data.length; i+=4) {
+                  r += imgData.data[i];
+                  g += imgData.data[i+1];
+                  b += imgData.data[i+2];
+                }
+                r = Math.floor(r/count); g = Math.floor(g/count); b = Math.floor(b/count);
+                ctx.fillStyle = `rgb(${r},${g},${b})`;
+                ctx.fillRect(xx, yy, bw, bh);
+              }
+            }
+          }
+        });
+      } catch (err) {
+        console.error('OCR error:', err);
       }
-    };
+
+      requestAnimationFrame(processFrame);
+    }
   </script>
 </body>
 </html>
