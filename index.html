@@ -28,6 +28,15 @@
     </form>
     <div class="preview" id="preview"></div>
   </div>
+  
+<div id="videoWrapper">
+  <video id="sourceVideo" controls style="display:none;"></video>
+  <div id="canvasContainer">
+    <canvas id="canvas"></canvas>
+    <div id="selectionRect"></div>
+  </div>
+</div>
+  
 
   <script>
     const form = document.getElementById('uploadForm');
