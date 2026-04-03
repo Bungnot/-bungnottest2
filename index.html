@@ -3,154 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ยอดเล่น Real‑Time (ดูอย่างเดียว)</title>
+  <title>ยอดเล่น Real-Time (ดูอย่างเดียว)</title>
 
-  <!-- Firebase compat (เหมือนเว็บหลัก) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <style>
-    :root {
-      --bg: #0b1220;
-      --card: #ffffff;
-      --muted: #64748b;
-      --green: #16a34a;
-      --chip: #f1f5f9;
-      --chipText: #0f172a;
-    }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Sarabun", sans-serif;
-      background: linear-gradient(180deg, #020617 0%, #0b1220 60%, #111827 100%);
-      color: #e2e8f0;
-      padding: 16px;
-    }
-    .wrap { max-width: 440px; margin: 0 auto; }
-    .header {
-      display:flex; align-items:center; gap:10px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 16px;
-      padding: 12px 14px;
-      backdrop-filter: blur(8px);
-    }
-    .dot {
-      width:10px; height:10px; border-radius:50%;
-      background: #22c55e;
-      box-shadow: 0 0 0 0 rgba(34,197,94,.6);
-      animation: pulse 1.5s infinite;
-      flex: 0 0 auto;
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(34,197,94,.6); }
-      100% { box-shadow: 0 0 0 14px rgba(34,197,94,0); }
-    }
-    .title {
-      font-weight: 800;
-      letter-spacing: .2px;
-    }
-    .sub {
-      margin-left:auto;
-      font-size: 12px;
-      color: var(--muted);
-      text-align: right;
-      line-height: 1.1rem;
-    }
-
-    .card {
-      margin-top: 12px;
-      background: rgba(255,255,255,0.92);
-      color: #0f172a;
-      border-radius: 18px;
-      border: 1px solid rgba(15, 23, 42, 0.06);
-      box-shadow: 0 18px 45px rgba(0,0,0,.35);
-      overflow: hidden;
-    }
-
-    .toolbar {
-      padding: 12px;
-      border-bottom: 1px solid rgba(15,23,42,0.08);
-      display:flex; gap:10px; align-items:center;
-    }
-    .search {
-      flex:1;
-      border: 1px solid rgba(15,23,42,0.12);
-      background: white;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 14px;
-      outline: none;
-    }
-    .search:focus {
-      border-color: rgba(34,197,94,0.7);
-      box-shadow: 0 0 0 4px rgba(34,197,94,0.15);
-    }
-    .chip {
-      background: var(--chip);
-      color: var(--chipText);
-      border-radius: 999px;
-      padding: 8px 10px;
-      font-size: 12px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .list {
-      padding: 10px 10px 12px;
-    }
-
-    .row {
-      display:flex; align-items:center; gap:10px;
-      padding: 9px 10px;
-      border-radius: 14px;
-      transition: .15s;
-    }
-    .row:hover {
-      background: rgba(15, 23, 42, 0.04);
-      transform: translateX(2px);
-    }
-    .rank {
-      width: 36px;
-      color: #0f172a;
-      font-weight: 900;
-      font-size: 12px;
-      opacity: .75;
-      flex: 0 0 auto;
-    }
-    .name {
-      flex: 1 1 auto;
-      font-weight: 800;
-      font-size: 14px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .amount {
-      flex: 0 0 auto;
-      font-weight: 900;
-      color: var(--green);
-      background: #ecfdf5;
-      padding: 6px 10px;
-      border-radius: 12px;
-      font-size: 13px;
-    }
-    .empty {
-      padding: 24px 12px;
-      text-align: center;
-      color: #64748b;
-      font-style: italic;
-    }
+    body{margin:0;font-family:system-ui,Segoe UI,Arial;background:#0b1220;color:#e2e8f0;padding:16px}
+    .wrap{max-width:440px;margin:0 auto}
+    .header{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:12px 14px;border-radius:16px}
+    .dot{width:10px;height:10px;border-radius:50%;background:#22c55e}
+    .title{font-weight:800}
+    .sub{margin-left:auto;font-size:12px;color:#94a3b8;text-align:right;line-height:1.1rem}
+    .card{margin-top:12px;background:rgba(255,255,255,.92);color:#0f172a;border-radius:18px;overflow:hidden}
+    .toolbar{padding:12px;border-bottom:1px solid rgba(15,23,42,.08);display:flex;gap:10px;align-items:center}
+    .search{flex:1;border:1px solid rgba(15,23,42,.12);border-radius:12px;padding:10px 12px;font-size:14px}
+    .chip{background:#f1f5f9;border-radius:999px;padding:8px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+    .list{padding:10px}
+    .row{display:flex;gap:10px;align-items:center;padding:9px 10px;border-radius:14px}
+    .rank{width:36px;font-weight:900;font-size:12px;opacity:.75}
+    .name{flex:1;font-weight:800;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .amount{font-weight:900;color:#16a34a;background:#ecfdf5;padding:6px 10px;border-radius:12px;font-size:13px}
+    .empty{padding:24px 12px;text-align:center;color:#64748b;font-style:italic}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="header">
       <div class="dot"></div>
-      <div class="title">ยอดเล่น Real‑Time</div>
-      <div class="sub">
-        ดูอย่างเดียว<br/>
-        <span id="updatedAt">กำลังเชื่อมต่อ…</span>
-      </div>
+      <div class="title">ยอดเล่น Real-Time</div>
+      <div class="sub">ดูอย่างเดียว<br><span id="updatedAt">กำลังเชื่อมต่อ…</span></div>
     </div>
 
     <div class="card">
@@ -158,84 +40,70 @@
         <input id="q" class="search" placeholder="ค้นหาชื่อ…" />
         <div class="chip"><span id="count">0</span> คน</div>
       </div>
-
-      <div id="list" class="list">
-        <div class="empty">รอข้อมูล…</div>
-      </div>
+      <div id="list" class="list"><div class="empty">รอข้อมูล…</div></div>
     </div>
   </div>
 
   <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBQQqfwcPDFPjdzeaMkU4EwpYXkBr256yo",
-    authDomain: "admin-rocket-live.firebaseapp.com",
-    databaseURL: "https://admin-rocket-live-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "admin-rocket-live",
-    storageBucket: "admin-rocket-live.firebasestorage.app",
-    messagingSenderId: "875303528481",
-    appId: "1:875303528481:web:719af49939623d64225b60"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+    // ใช้ firebaseConfig เดียวกับเว็บหลักของคุณ :contentReference[oaicite:9]{index=9}
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQQqfwcPDFPjdzeaMkU4EwpYXkBr256yo",
+      authDomain: "admin-rocket-live.firebaseapp.com",
+      databaseURL: "https://admin-rocket-live-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "admin-rocket-live",
+      storageBucket: "admin-rocket-live.firebasestorage.app",
+      messagingSenderId: "875303528481",
+      appId: "1:875303528481:web:719af49939623d64225b60"
+    };
 
-  const listEl = document.getElementById('list');
-  const qEl = document.getElementById('q');
-  const countEl = document.getElementById('count');
-  const updatedAtEl = document.getElementById('updatedAt');
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-  function escapeHtml(s) {
-    return String(s ?? '')
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
-  }
+    const listEl = document.getElementById('list');
+    const qEl = document.getElementById('q');
+    const countEl = document.getElementById('count');
+    const updatedAtEl = document.getElementById('updatedAt');
 
-  function render(map) {
-    const q = (qEl.value || '').trim().toLowerCase();
-    const entries = Object.entries(map || {})
-      .map(([name, total]) => [name, Number(total) || 0])
-      .filter(([, total]) => total > 0)
-      .filter(([name]) => !q || name.toLowerCase().includes(q))
-      .sort((a,b) => b[1] - a[1]);
-
-    countEl.textContent = String(entries.length);
-
-    if (entries.length === 0) {
-      listEl.innerHTML = '<div class="empty">ไม่มีข้อมูล</div>';
-      return;
+    function escapeHtml(s){
+      return String(s ?? '')
+        .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+        .replaceAll('"','&quot;').replaceAll("'","&#039;");
     }
 
-    listEl.innerHTML = entries.map(([name, total], i) => {
-      const displayName = escapeHtml(name.replace(/^@+/, ''));
-      const amt = total.toLocaleString('th-TH');
-      return `
+    function render(map){
+      const q = (qEl.value || '').trim().toLowerCase();
+      const entries = Object.entries(map || {})
+        .map(([name,total]) => [name, Number(total)||0])
+        .filter(([,t]) => t > 0)
+        .filter(([name]) => !q || name.toLowerCase().includes(q))
+        .sort((a,b) => b[1]-a[1]);
+
+      countEl.textContent = String(entries.length);
+
+      if(entries.length === 0){
+        listEl.innerHTML = '<div class="empty">ไม่มีข้อมูล</div>';
+        return;
+      }
+
+      listEl.innerHTML = entries.map(([name,total], i) => `
         <div class="row">
           <div class="rank">#${i+1}</div>
-          <div class="name">${displayName}</div>
-          <div class="amount">${amt}</div>
+          <div class="name">${escapeHtml(name.replace(/^@+/,''))}</div>
+          <div class="amount">${total.toLocaleString('th-TH')}</div>
         </div>
-      `;
-    }).join('');
-  }
+      `).join('');
+    }
 
-  // 1) ฟังยอดรวมที่เว็บหลัก "ต้องเขียนขึ้น Firebase" ไว้ที่ liveSummary
-  db.ref('liveSummary').on('value', (snap) => {
-    render(snap.val());
-  });
+    db.ref('liveSummary').on('value', snap => render(snap.val()));
+    db.ref('liveSummaryUpdatedAt').on('value', snap => {
+      const ts = snap.val();
+      if(!ts) return;
+      updatedAtEl.textContent = 'อัปเดต: ' + new Date(ts).toLocaleString('th-TH');
+    });
 
-  // 2) ฟังเวลาอัปเดต (ถ้าเว็บหลักส่งค่าไว้)
-  db.ref('liveSummaryUpdatedAt').on('value', (snap) => {
-    const ts = snap.val();
-    if (!ts) return;
-    const d = new Date(ts);
-    updatedAtEl.textContent = 'อัปเดต: ' + d.toLocaleString('th-TH');
-  });
-
-  qEl.addEventListener('input', () => {
-    db.ref('liveSummary').once('value').then(s => render(s.val()));
-  });
+    qEl.addEventListener('input', () => {
+      db.ref('liveSummary').once('value').then(s => render(s.val()));
+    });
   </script>
 </body>
 </html>
