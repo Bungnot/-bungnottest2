@@ -1,51 +1,142 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ยอดเล่น Real-Time (ดูอย่างเดียว)</title>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real-Time Dashboard</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
   <style>
-    body{margin:0;font-family:system-ui,Segoe UI,Arial;background:#0b1220;color:#e2e8f0;padding:16px}
-    .wrap{max-width:440px;margin:0 auto}
-    .header{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:12px 14px;border-radius:16px}
-    .dot{width:10px;height:10px;border-radius:50%;background:#22c55e}
-    .title{font-weight:800}
-    .sub{margin-left:auto;font-size:12px;color:#94a3b8;text-align:right;line-height:1.1rem}
-    .card{margin-top:12px;background:rgba(255,255,255,.92);color:#0f172a;border-radius:18px;overflow:hidden}
-    .toolbar{padding:12px;border-bottom:1px solid rgba(15,23,42,.08);display:flex;gap:10px;align-items:center}
-    .search{flex:1;border:1px solid rgba(15,23,42,.12);border-radius:12px;padding:10px 12px;font-size:14px}
-    .chip{background:#f1f5f9;border-radius:999px;padding:8px 10px;font-size:12px;font-weight:700;white-space:nowrap}
-    .list{padding:10px}
-    .row{display:flex;gap:10px;align-items:center;padding:9px 10px;border-radius:14px}
-    .rank{width:36px;font-weight:900;font-size:12px;opacity:.75}
-    .name{flex:1;font-weight:800;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .amount{font-weight:900;color:#16a34a;background:#ecfdf5;padding:6px 10px;border-radius:12px;font-size:13px}
-    .empty{padding:24px 12px;text-align:center;color:#64748b;font-style:italic}
+    :root{
+      --bg1:#0f172a;
+      --bg2:#111827;
+      --card:#ffffff;
+      --line:#e5e7eb;
+      --muted:#64748b;
+      --text:#0f172a;
+      --green:#16a34a;
+      --amber:#f59e0b;
+      --blue:#2563eb;
+      --danger:#dc2626;
+      --shadow:0 18px 50px rgba(0,0,0,.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Sarabun", sans-serif;
+      color:var(--text);
+      background: radial-gradient(circle at top, #1e293b 0%, var(--bg1) 45%, #020617 100%);
+      min-height:100vh;
+    }
+    .wrap{max-width:1400px;margin:0 auto;padding:24px}
+    .topbar{
+      display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .titlebox{
+      color:#fff;
+    }
+    .title{font-size:clamp(1.4rem,2vw,2.2rem);font-weight:800;margin:0}
+    .sub{margin-top:6px;color:#cbd5e1;font-size:.95rem}
+    .live-pill{
+      display:inline-flex;align-items:center;gap:10px;
+      background:rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);backdrop-filter: blur(10px);
+    }
+    .dot{width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 0 rgba(34,197,94,.7);animation:pulse 1.5s infinite}
+    @keyframes pulse{100%{box-shadow:0 0 0 12px rgba(34,197,94,0)}}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:16px 0 22px}
+    .card{
+      background:rgba(255,255,255,.96);border-radius:22px;padding:18px 18px 16px;box-shadow:var(--shadow);
+    }
+    .stat-label{font-size:.84rem;color:var(--muted);margin-bottom:8px}
+    .stat-value{font-size:1.8rem;font-weight:900;letter-spacing:-.02em}
+    .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+    .panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .panel-title h2{margin:0;font-size:1.05rem}
+    .panel-note{color:var(--muted);font-size:.84rem}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left}
+    th{font-size:.86rem;color:var(--muted)}
+    tbody tr:hover{background:#f8fafc}
+    .rank{
+      width:34px;height:34px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;
+      font-weight:800;background:#eef2ff;color:#3730a3
+    }
+    .amount{font-weight:800;color:var(--green)}
+    .camp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .camp-card{border:1px solid var(--line);border-radius:18px;padding:14px;background:#fff}
+    .camp-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+    .camp-name{font-weight:800}
+    .camp-total{font-size:.86rem;color:var(--muted)}
+    .mini-row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px dashed #e5e7eb}
+    .mini-row:first-child{border-top:none}
+    .empty{padding:26px;text-align:center;color:var(--muted);border:1px dashed #cbd5e1;border-radius:18px;background:#f8fafc}
+    .footer-note{margin-top:16px;color:#cbd5e1;font-size:.82rem;text-align:center}
+    .badge{padding:6px 10px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-weight:700;font-size:.76rem}
+    @media (max-width: 1000px){
+      .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .layout{grid-template-columns:1fr}
+      .camp-grid{grid-template-columns:1fr}
+    }
+    @media (max-width: 640px){
+      .wrap{padding:14px}
+      .stats{grid-template-columns:1fr}
+      th,td{padding:10px 8px;font-size:.92rem}
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="header">
-      <div class="dot"></div>
-      <div class="title">ยอดเล่น Real-Time</div>
-      <div class="sub">ดูอย่างเดียว<br><span id="updatedAt">กำลังเชื่อมต่อ…</span></div>
+    <div class="topbar">
+      <div class="titlebox">
+        <h1 class="title">Dashboard ยอดเล่น Real-Time</h1>
+        <div class="sub">ทุกคนที่เปิดหน้านี้จะเห็นข้อมูลชุดเดียวกันทันที จาก Firebase Realtime Database</div>
+      </div>
+      <div class="live-pill"><span class="dot"></span><span id="live-status">กำลังเชื่อมต่อ...</span></div>
     </div>
 
-    <div class="card">
-      <div class="toolbar">
-        <input id="q" class="search" placeholder="ค้นหาชื่อ…" />
-        <div class="chip"><span id="count">0</span> คน</div>
+    <div class="stats">
+      <div class="card">
+        <div class="stat-label">ยอดรวมทั้งหมด</div>
+        <div class="stat-value" id="grand-total">0</div>
       </div>
-      <div id="list" class="list"><div class="empty">รอข้อมูล…</div></div>
+      <div class="card">
+        <div class="stat-label">จำนวนคนทั้งหมด</div>
+        <div class="stat-value" id="player-count">0</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">จำนวนค่าย</div>
+        <div class="stat-value" id="camp-count">0</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">อัปเดตล่าสุด</div>
+        <div class="stat-value" id="updated-at" style="font-size:1.1rem">-</div>
+      </div>
     </div>
+
+    <div class="layout">
+      <section class="card">
+        <div class="panel-title">
+          <h2>อันดับยอดรวมรายคน</h2>
+          <span class="badge" id="global-count-badge">0 คน</span>
+        </div>
+        <div id="global-wrap"></div>
+      </section>
+
+      <section class="card">
+        <div class="panel-title">
+          <h2>แยกตามค่าย</h2>
+          <span class="panel-note">ดึงข้อมูลสดทุกครั้งที่เว็บหลักบันทึก</span>
+        </div>
+        <div id="camp-wrap"></div>
+      </section>
+    </div>
+
+    <div class="footer-note">หน้าเว็บนี้เป็นหน้าแสดงผลอย่างเดียว ไม่ต้องกรอกข้อมูลที่นี่</div>
   </div>
 
   <script>
-    // ใช้ firebaseConfig เดียวกับเว็บหลักของคุณ :contentReference[oaicite:9]{index=9}
     const firebaseConfig = {
       apiKey: "AIzaSyBQQqfwcPDFPjdzeaMkU4EwpYXkBr256yo",
       authDomain: "admin-rocket-live.firebaseapp.com",
@@ -59,50 +150,100 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const listEl = document.getElementById('list');
-    const qEl = document.getElementById('q');
-    const countEl = document.getElementById('count');
-    const updatedAtEl = document.getElementById('updatedAt');
+    const fmt = new Intl.NumberFormat('th-TH');
+    const dtf = new Intl.DateTimeFormat('th-TH', {
+      dateStyle: 'short',
+      timeStyle: 'medium'
+    });
 
-    function escapeHtml(s){
-      return String(s ?? '')
-        .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
-        .replaceAll('"','&quot;').replaceAll("'","&#039;");
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
-    function render(map){
-      const q = (qEl.value || '').trim().toLowerCase();
-      const entries = Object.entries(map || {})
-        .map(([name,total]) => [name, Number(total)||0])
-        .filter(([,t]) => t > 0)
-        .filter(([name]) => !q || name.toLowerCase().includes(q))
-        .sort((a,b) => b[1]-a[1]);
+    function renderGlobal(players) {
+      const wrap = document.getElementById('global-wrap');
+      const entries = Object.entries(players || {}).sort((a,b) => b[1] - a[1]);
+      document.getElementById('global-count-badge').textContent = `${entries.length} คน`;
+      document.getElementById('player-count').textContent = fmt.format(entries.length);
 
-      countEl.textContent = String(entries.length);
-
-      if(entries.length === 0){
-        listEl.innerHTML = '<div class="empty">ไม่มีข้อมูล</div>';
+      if (!entries.length) {
+        wrap.innerHTML = '<div class="empty">ยังไม่มีข้อมูล</div>';
         return;
       }
 
-      listEl.innerHTML = entries.map(([name,total], i) => `
-        <div class="row">
-          <div class="rank">#${i+1}</div>
-          <div class="name">${escapeHtml(name.replace(/^@+/,''))}</div>
-          <div class="amount">${total.toLocaleString('th-TH')}</div>
-        </div>
-      `).join('');
+      wrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70px">อันดับ</th>
+              <th>ชื่อ</th>
+              <th style="text-align:right">ยอด</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${entries.map(([name, amount], i) => `
+              <tr>
+                <td><span class="rank">${i + 1}</span></td>
+                <td>${escapeHtml(name)}</td>
+                <td style="text-align:right" class="amount">${fmt.format(amount)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
     }
 
-    db.ref('liveSummary').on('value', snap => render(snap.val()));
-    db.ref('liveSummaryUpdatedAt').on('value', snap => {
-      const ts = snap.val();
-      if(!ts) return;
-      updatedAtEl.textContent = 'อัปเดต: ' + new Date(ts).toLocaleString('th-TH');
-    });
+    function renderCamps(tables) {
+      const wrap = document.getElementById('camp-wrap');
+      const entries = Object.entries(tables || {});
+      document.getElementById('camp-count').textContent = fmt.format(entries.length);
 
-    qEl.addEventListener('input', () => {
-      db.ref('liveSummary').once('value').then(s => render(s.val()));
+      if (!entries.length) {
+        wrap.innerHTML = '<div class="empty">ยังไม่มีข้อมูลค่าย</div>';
+        return;
+      }
+
+      wrap.innerHTML = `<div class="camp-grid">${entries.map(([key, table]) => {
+        const players = Object.entries(table.players || {}).sort((a,b) => b[1] - a[1]);
+        return `
+          <div class="camp-card">
+            <div class="camp-head">
+              <div class="camp-name">${escapeHtml(table.title || key)}</div>
+              <div class="camp-total">รวม ${fmt.format(table.total || 0)}</div>
+            </div>
+            <div>
+              ${players.length ? players.map(([name, amount]) => `
+                <div class="mini-row">
+                  <div>${escapeHtml(name)}</div>
+                  <div class="amount">${fmt.format(amount)}</div>
+                </div>
+              `).join('') : '<div class="empty" style="padding:14px">ไม่มีข้อมูล</div>'}
+            </div>
+          </div>
+        `;
+      }).join('')}</div>`;
+    }
+
+    db.ref('liveDashboard').on('value', (snapshot) => {
+      const data = snapshot.val() || {};
+      const players = data.players || {};
+      const tables = data.tables || {};
+      const grandTotal = Object.values(players).reduce((sum, val) => sum + (Number(val) || 0), 0);
+
+      document.getElementById('grand-total').textContent = fmt.format(grandTotal);
+      document.getElementById('updated-at').textContent = data.updatedAt ? dtf.format(new Date(data.updatedAt)) : '-';
+      document.getElementById('live-status').textContent = 'เชื่อมต่อสดแล้ว';
+
+      renderGlobal(players);
+      renderCamps(tables);
+    }, (error) => {
+      document.getElementById('live-status').textContent = 'เชื่อมต่อไม่สำเร็จ';
+      console.error(error);
     });
   </script>
 </body>
